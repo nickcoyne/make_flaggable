@@ -63,7 +63,7 @@ module MakeFlaggable
       flagged?(flaggable, flag)
     end
 
-    def flagged?(flaggable, flag)
+    def flagged?(flaggable, flag = nil)
       check_flaggable(flaggable, flag)
       fetch_flaggings(flaggable, flag).try(:first) ? true : false
     end
