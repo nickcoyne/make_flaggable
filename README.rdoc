@@ -90,21 +90,21 @@ migrate the database
 
   # Get the last Flagging made on an article (Flaggable) by a user (Flagger)
   #   Format:
-  #     # last flagging of any type
+  #     # of any type
   #     flagger.find_last_flag_for(flaggable)
   user.find_last_flag_for(article)
 
-  #     # last flagging of a specific type
+  #     # of a specific type
   #     flagger.find_last_flag_for(flaggable, flag)
   user.find_last_flag_for(article, :inappropriate)
 
   # Get all Flaggings made on an article (Flaggable) by a user (Flagger)
   #   Format:
-  #     # last flagging of any type
+  #     # of any type
   #     flagger.find_all_flags_for(flaggable)
   user.find_all_flags_for(article)
 
-  #     # last flagging of a specific type
+  #     # of a specific type
   #     flagger.find_all_flags_for(flaggable, flag)
   user.find_all_flags_for(article, :spam)
 
