@@ -1,5 +1,7 @@
 = MakeFlaggable
 
+{<img src="https://travis-ci.org/cavneb/make_flaggable.png?branch=master" alt="Build Status" />}[https://travis-ci.org/cavneb/make_flaggable]
+
 MakeFlaggable is an extension for building a user-centric flagging system for Rails 3 applications.
 It currently supports ActiveRecord models.
 
