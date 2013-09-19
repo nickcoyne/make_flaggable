@@ -1,5 +1,7 @@
 module MakeFlaggable
   class Flagging < ActiveRecord::Base
+    include ActiveModel::MassAssignmentSecurity
+    
     attr_accessible :flaggable, :flagger, :flag
     belongs_to :flaggable, :polymorphic => true
     belongs_to :flagger, :polymorphic => true
