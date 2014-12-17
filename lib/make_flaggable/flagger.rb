@@ -3,7 +3,7 @@ module MakeFlaggable
     extend ActiveSupport::Concern
 
     included do
-      has_many :flaggings, :class_name => "MakeFlaggable::Flagging", :as => :flagger, :dependent => :destroy
+      has_many :flags, :class_name => "MakeFlaggable::Flagging", :as => :flagger, :dependent => :destroy
     end
 
     module ClassMethods
@@ -19,11 +19,11 @@ module MakeFlaggable
     def flag!(flaggable, flag)
       check_flaggable(flaggable, flag)
 
-      if flagged?(flaggable, flag)
+      if has_flagged?(flaggable, flag)
         raise MakeFlaggable::Exceptions::AlreadyFlaggedError.new
       end
 
-      Flagging.create(:flaggable => flaggable, :flagger => self, :flag => flag)
+      Flagging.create({ :flaggable => flaggable, :flagger => self, :flag => flag }, without_protection: true)
     end
 
     # Flag the +flaggable+, but don't raise an error if the flaggable was already flagged by the +flagger+ with the +:flag+.
@@ -37,11 +37,11 @@ module MakeFlaggable
     def unflag!(flaggable, flag)
       check_flaggable(flaggable, flag)
 
-      flaggings = fetch_flaggings(flaggable, flag)
+      flags_for_flaggable = fetch_flaggings(flaggable, flag)
 
-      raise Exceptions::NotFlaggedError if flaggings.empty?
+      raise Exceptions::NotFlaggedError if flags_for_flaggable.empty?
 
-      flaggings.destroy_all
+      flags_for_flaggable.destroy_all
 
       true
     end
@@ -59,11 +59,11 @@ module MakeFlaggable
     # Toggles the state of a given flag on a flaggable object
     # and returns the new flag state
     def toggle_flag(flaggable, flag)
-      flagged?(flaggable, flag) ? unflag(flaggable, flag) : flag(flaggable, flag)
-      flagged?(flaggable, flag)
+      has_flagged?(flaggable, flag) ? unflag(flaggable, flag) : flag(flaggable, flag)
+      has_flagged?(flaggable, flag)
     end
 
-    def flagged?(flaggable, flag = nil)
+    def has_flagged?(flaggable, flag = nil)
       check_flaggable(flaggable, flag)
       fetch_flaggings(flaggable, flag).try(:first) ? true : false
     end
@@ -83,14 +83,14 @@ module MakeFlaggable
     def fetch_flaggings(flaggable, flag)
       conditions = { :flaggable_type => flaggable.class.to_s, :flaggable_id => flaggable.id }
       conditions.merge!(:flag => flag.to_s) if flag.present?
-      flaggings.where(conditions)
+      flags.where(conditions)
     end
 
     def check_flaggable(flaggable, flag)
       raise Exceptions::InvalidFlaggableError unless flaggable.class.flaggable?
 
       if flag.present?
-        raise Exceptions::InvalidFlagError unless flaggable.available_flags.include? flag.to_sym
+        raise Exceptions::InvalidFlagError unless flaggable.available_flags.include?(flag.to_sym)
       end
     end
   end
