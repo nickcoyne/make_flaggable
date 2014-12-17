@@ -3,7 +3,7 @@ module MakeFlaggable
     extend ActiveSupport::Concern
 
     included do
-      has_many :flags, :class_name => "MakeFlaggable::Flagging", :as => :flagger, :dependent => :destroy
+      has_many :flags, class_name: "MakeFlaggable::Flagging", as: :flagger, dependent: :destroy
     end
 
     module ClassMethods
@@ -23,7 +23,7 @@ module MakeFlaggable
         raise MakeFlaggable::Exceptions::AlreadyFlaggedError.new
       end
 
-      Flagging.create({ :flaggable => flaggable, :flagger => self, :flag => flag }, without_protection: true)
+      Flagging.create({ flaggable: flaggable, flagger: self, flag: flag }, without_protection: true)
     end
 
     # Flag the +flaggable+, but don't raise an error if the flaggable was already flagged by the +flagger+ with the +:flag+.
@@ -81,8 +81,8 @@ module MakeFlaggable
     private
 
     def fetch_flaggings(flaggable, flag)
-      conditions = { :flaggable_type => flaggable.class.to_s, :flaggable_id => flaggable.id }
-      conditions.merge!(:flag => flag.to_s) if flag.present?
+      conditions = { flaggable_type: flaggable.class.to_s, flaggable_id: flaggable.id }
+      conditions.merge!(flag: flag.to_s) if flag.present?
       flags.where(conditions)
     end
 
