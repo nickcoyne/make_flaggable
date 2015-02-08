@@ -16,5 +16,13 @@ module MakeFlaggable
     def unignore
       update_attribute(:ignored, false)
     end
+
+    def self.ignore_all(conditions = nil)
+      if conditions
+        where(conditions).ignore_all
+      else
+        all.each {|object| object.ignore }
+      end
+    end
   end
 end
