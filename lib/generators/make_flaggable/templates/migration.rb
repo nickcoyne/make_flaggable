@@ -6,6 +6,7 @@ class CreateMakeFlaggableTables < ActiveRecord::Migration
        t.string   :flagger_type
        t.integer  :flagger_id
        t.string   :flag
+       t.boolean  :ignored, default: false
 
        t.timestamps
     end
@@ -21,7 +22,7 @@ class CreateMakeFlaggableTables < ActiveRecord::Migration
     remove_index :flaggings, :column => [:flag, :flaggable_type, :flaggable_id]
     remove_index :flaggings, :name => "access_flaggings"
     remove_index :flaggings, :name => "access_flag_flaggings"
-    
+
     drop_table :flaggings
   end
 end

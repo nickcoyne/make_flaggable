@@ -17,6 +17,7 @@ ActiveRecord::Schema.define :version => 0 do
      t.string :flagger_type
      t.integer :flagger_id
      t.string :flag
+     t.boolean :ignored, default: false
 
      t.timestamps
   end
