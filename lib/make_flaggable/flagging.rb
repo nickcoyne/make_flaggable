@@ -4,6 +4,8 @@ module MakeFlaggable
     belongs_to :flagger, polymorphic: true
     scope :with_flag, lambda { |flag| where(flag: flag.to_s) }
     scope :with_flaggable, lambda { |flaggable| where(flaggable_type: flaggable.class.name, flaggable_id: flaggable.id) }
+    scope :ignored, lambda { where(ignored: true) }
+    scope :unignored, lambda { where(ignored: false) }
 
     attr_accessible  :flaggable, :flagger, :flag, :ignored
 
