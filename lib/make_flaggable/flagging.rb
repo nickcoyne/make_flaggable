@@ -1,5 +1,7 @@
 module MakeFlaggable
   class Flagging < ActiveRecord::Base
+    attr_accessible  :flaggable, :flagger, :flag, :ignored
+
     belongs_to :flaggable, polymorphic: true, counter_cache: true
     belongs_to :flagger, polymorphic: true
     scope :with_flag, lambda { |flag| where(flag: flag.to_s) }
@@ -7,14 +9,18 @@ module MakeFlaggable
     scope :ignored, lambda { where(ignored: true) }
     scope :unignored, lambda { where(ignored: false) }
 
-    attr_accessible  :flaggable, :flagger, :flag, :ignored
-
     def ignore
-      update_attribute(:ignored, true)
+      self.class.transaction do
+        update_attribute(:ignored, true)
+        flaggable.class.decrement_counter(:flaggings_count, flaggable.id)
+      end
     end
 
     def unignore
-      update_attribute(:ignored, false)
+      self.class.transaction do
+        update_attribute(:ignored, false)
+        flaggable.class.increment_counter(:flaggings_count, flaggable.id)
+      end
     end
 
     def self.ignore_all(conditions = nil)
